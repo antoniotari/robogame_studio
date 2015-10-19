@@ -1,7 +1,7 @@
 package com.kilobolt.framework.implementation;
 
-import java.io.IOException;
-import java.io.InputStream;
+import com.kilobolt.framework.Graphics;
+import com.kilobolt.framework.Image;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -13,20 +13,15 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 
-import com.kilobolt.framework.Graphics;
-import com.kilobolt.framework.Image;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * The three important classes here are Bitmap, Canvas, and Paint.
- * 1. Bitmap just allows you to create image objects.
- * 2. Canvas is really a canvas for your images. You draw images onto the canvas, which will appear on the screen.
- * 3. Paint is used for styling what you draw to the screen.
- * When you draw an image to the screen, you first store it to memory, and you just 
- * call the same file from memory each time that this image is used. 
- * No matter how many GBs are in a device's RAM, only a small chunk 
- * is dedicated to each app. This "heap" can be as little as 16MB, 
- * so you really have to be careful with memory management
- *
+ * The three important classes here are Bitmap, Canvas, and Paint. 1. Bitmap just allows you to create image objects. 2. Canvas is really a
+ * canvas for your images. You draw images onto the canvas, which will appear on the screen. 3. Paint is used for styling what you draw to
+ * the screen. When you draw an image to the screen, you first store it to memory, and you just call the same file from memory each time
+ * that this image is used. No matter how many GBs are in a device's RAM, only a small chunk is dedicated to each app. This "heap" can be as
+ * little as 16MB, so you really have to be careful with memory management
  */
 
 /**
@@ -47,8 +42,7 @@ import com.kilobolt.framework.Image;
  * you will get an out of memory exception and your game will crash
  */
 
-public class AndroidGraphics implements Graphics 
-{
+public class AndroidGraphics implements Graphics {
     AssetManager assets;
     Bitmap frameBuffer;
     Canvas canvas;
@@ -56,8 +50,7 @@ public class AndroidGraphics implements Graphics
     Rect srcRect = new Rect();
     Rect dstRect = new Rect();
 
-    public AndroidGraphics(AssetManager assets, Bitmap frameBuffer) 
-    {
+    public AndroidGraphics(AssetManager assets, Bitmap frameBuffer) {
         this.assets = assets;
         this.frameBuffer = frameBuffer;
         this.canvas = new Canvas(frameBuffer);
@@ -65,28 +58,28 @@ public class AndroidGraphics implements Graphics
     }
 
     @Override
-    public Image newImage(String fileName, ImageFormat format) 
-    {
-        Config config = null;
-        if (format == ImageFormat.RGB565)
+    public Image newImage(String fileName, ImageFormat format) {
+        Config config;
+        if (format == ImageFormat.RGB565) {
             config = Config.RGB_565;
-        else if (format == ImageFormat.ARGB4444)
+        } else if (format == ImageFormat.ARGB4444) {
             config = Config.ARGB_4444;
-        else
+        } else {
             config = Config.ARGB_8888;
+        }
 
         Options options = new Options();
         options.inPreferredConfig = config;
-        
-        
+
         InputStream in = null;
         Bitmap bitmap = null;
         try {
             in = assets.open(fileName);
             bitmap = BitmapFactory.decodeStream(in, null, options);
-            if (bitmap == null)
+            if (bitmap == null) {
                 throw new RuntimeException("Couldn't load bitmap from asset '"
                         + fileName + "'");
+            }
         } catch (IOException e) {
             throw new RuntimeException("Couldn't load bitmap from asset '"
                     + fileName + "'");
@@ -99,12 +92,13 @@ public class AndroidGraphics implements Graphics
             }
         }
 
-        if (bitmap.getConfig() == Config.RGB_565)
+        if (bitmap.getConfig() == Config.RGB_565) {
             format = ImageFormat.RGB565;
-        else if (bitmap.getConfig() == Config.ARGB_4444)
+        } else if (bitmap.getConfig() == Config.ARGB_4444) {
             format = ImageFormat.ARGB4444;
-        else
+        } else {
             format = ImageFormat.ARGB8888;
+        }
 
         return new AndroidImage(bitmap, format);
     }
@@ -114,7 +108,6 @@ public class AndroidGraphics implements Graphics
         canvas.drawRGB((color & 0xff0000) >> 16, (color & 0xff00) >> 8,
                 (color & 0xff));
     }
-
 
     @Override
     public void drawLine(int x, int y, int x2, int y2, int color) {
@@ -128,20 +121,17 @@ public class AndroidGraphics implements Graphics
         paint.setStyle(Style.FILL);
         canvas.drawRect(x, y, x + width - 1, y + height - 1, paint);
     }
-    
+
     @Override
     public void drawARGB(int a, int r, int g, int b) {
         paint.setStyle(Style.FILL);
-       canvas.drawARGB(a, r, g, b);
+        canvas.drawARGB(a, r, g, b);
     }
-    
-    @Override
-    public void drawString(String text, int x, int y, Paint paint){
-    	canvas.drawText(text, x, y, paint);
 
-    	
+    @Override
+    public void drawString(String text, int x, int y, Paint paint) {
+        canvas.drawText(text, x, y, paint);
     }
-    
 
     public void drawImage(Image Image, int x, int y, int srcX, int srcY,
             int srcWidth, int srcHeight) {
@@ -149,8 +139,7 @@ public class AndroidGraphics implements Graphics
         srcRect.top = srcY;
         srcRect.right = srcX + srcWidth;
         srcRect.bottom = srcY + srcHeight;
-        
-        
+
         dstRect.left = x;
         dstRect.top = y;
         dstRect.right = x + srcWidth;
@@ -159,32 +148,27 @@ public class AndroidGraphics implements Graphics
         canvas.drawBitmap(((AndroidImage) Image).bitmap, srcRect, dstRect,
                 null);
     }
-    
+
     @Override
     public void drawImage(Image Image, int x, int y) {
-        canvas.drawBitmap(((AndroidImage)Image).bitmap, x, y, null);
+        canvas.drawBitmap(((AndroidImage) Image).bitmap, x, y, null);
     }
-    
-    public void drawScaledImage(Image Image, int x, int y, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight){
-    	
-    	
-   	 srcRect.left = srcX;
+
+    public void drawScaledImage(Image Image, int x, int y, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight) {
+
+        srcRect.left = srcX;
         srcRect.top = srcY;
         srcRect.right = srcX + srcWidth;
         srcRect.bottom = srcY + srcHeight;
-        
-        
+
         dstRect.left = x;
         dstRect.top = y;
         dstRect.right = x + width;
         dstRect.bottom = y + height;
-        
-   
-        
+
         canvas.drawBitmap(((AndroidImage) Image).bitmap, srcRect, dstRect, null);
-        
     }
-   
+
     @Override
     public int getWidth() {
         return frameBuffer.getWidth();

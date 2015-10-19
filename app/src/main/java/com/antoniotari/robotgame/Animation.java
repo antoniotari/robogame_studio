@@ -1,14 +1,13 @@
 package com.antoniotari.robotgame;
 
-import java.util.ArrayList;
-
 import com.kilobolt.framework.Image;
 
+import java.util.ArrayList;
 
 public class Animation {
 
-    private ArrayList frames;
-    private int currentFrame;
+    protected ArrayList frames;
+    protected int currentFrame;
     private long animTime;
     private long totalDuration;
 
@@ -27,19 +26,16 @@ public class Animation {
         frames.add(new AnimFrame(image, totalDuration));
     }
 
-    public synchronized void update(long elapsedTime) 
-    {
+    public synchronized void update(long elapsedTime) {
         if (frames.size() > 1) {
             animTime += elapsedTime;
             if (animTime >= totalDuration) {
                 animTime = animTime % totalDuration;
                 currentFrame = 0;
-
             }
 
             while (animTime > getFrame(currentFrame).endTime) {
                 currentFrame++;
-
             }
         }
     }

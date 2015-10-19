@@ -1,5 +1,13 @@
 package com.kilobolt.framework.implementation;
 
+import com.antoniotari.global.ScreenDimension;
+import com.kilobolt.framework.Audio;
+import com.kilobolt.framework.FileIO;
+import com.kilobolt.framework.Game;
+import com.kilobolt.framework.Graphics;
+import com.kilobolt.framework.Input;
+import com.kilobolt.framework.Screen;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -11,44 +19,33 @@ import android.os.PowerManager.WakeLock;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.antoniotari.global.ScreenDimension;
-import com.kilobolt.framework.Audio;
-import com.kilobolt.framework.FileIO;
-import com.kilobolt.framework.Game;
-import com.kilobolt.framework.Graphics;
-import com.kilobolt.framework.Input;
-import com.kilobolt.framework.Screen;
+public abstract class AndroidGame extends Activity implements Game {
+    private AndroidFastRenderView renderView;
+    private Graphics graphics;
+    private Audio audio;
+    private Input input;
+    private FileIO fileIO;
+    private Screen screen;
+    private WakeLock wakeLock;
 
-public abstract class AndroidGame extends Activity implements Game 
-{
-    AndroidFastRenderView renderView;
-    Graphics graphics;
-    Audio audio;
-    Input input;
-    FileIO fileIO;
-    Screen screen;
-    WakeLock wakeLock;
-
-	//-----------------------------------------------------------------
-	//------------
+    //-----------------------------------------------------------------
+    //------------
     @Override
-    public void onCreate(Bundle savedInstanceState) 
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
         ScreenDimension.setMetrics(this);
-        int frameBufferWidth = isPortrait ? 480: 800;
-        int frameBufferHeight = isPortrait ? 800: 480;
-        Bitmap frameBuffer = Bitmap.createBitmap(frameBufferWidth,frameBufferHeight, Config.RGB_565);
-		//Float dpiFact=Float.valueOf((float)ScreenDimension.getDensityDpi()/160.0f);
-        
-        float scaleX = (float) frameBufferWidth/ScreenDimension.getScreenWidthPX();
+        int frameBufferWidth = isPortrait ? 480 : 800;
+        int frameBufferHeight = isPortrait ? 800 : 480;
+        Bitmap frameBuffer = Bitmap.createBitmap(frameBufferWidth, frameBufferHeight, Config.RGB_565);
+        //Float dpiFact=Float.valueOf((float)ScreenDimension.getDensityDpi()/160.0f);
+
+        float scaleX = (float) frameBufferWidth / ScreenDimension.getScreenWidthPX();
         //        / getWindowManager().getDefaultDisplay().getWidth();
-        float scaleY = (float) frameBufferHeight/ScreenDimension.getScreenHeightPX();
+        float scaleY = (float) frameBufferHeight / ScreenDimension.getScreenHeightPX();
         //        / getWindowManager().getDefaultDisplay().getHeight();
 
         renderView = new AndroidFastRenderView(this, frameBuffer);
@@ -58,75 +55,70 @@ public abstract class AndroidGame extends Activity implements Game
         input = new AndroidInput(this, renderView, scaleX, scaleY);
         screen = getInitScreen();
         setContentView(renderView);
-        
+
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "MyGame");
+        wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "com.antoniotari.RoboGame");
     }
 
-	//-----------------------------------------------------------------
-	//------------
+    //-----------------------------------------------------------------
+    //------------
     @Override
-    public void onResume() 
-    {
+    public void onResume() {
         super.onResume();
         wakeLock.acquire();
         screen.resume();
         renderView.resume();
     }
 
-	//-----------------------------------------------------------------
-	//------------
+    //-----------------------------------------------------------------
+    //------------
     @Override
-    public void onPause() 
-    {
+    public void onPause() {
         super.onPause();
         wakeLock.release();
         renderView.pause();
         screen.pause();
 
-        if (isFinishing())
+        if (isFinishing()) {
             screen.dispose();
+        }
     }
 
-	//-----------------------------------------------------------------
-	//------------
+    //-----------------------------------------------------------------
+    //------------
     @Override
-    public Input getInput() 
-    {
+    public Input getInput() {
         return input;
     }
 
-	//-----------------------------------------------------------------
-	//------------
+    //-----------------------------------------------------------------
+    //------------
     @Override
-    public FileIO getFileIO() 
-    {
+    public FileIO getFileIO() {
         return fileIO;
     }
 
-	//-----------------------------------------------------------------
-	//------------
+    //-----------------------------------------------------------------
+    //------------
     @Override
-    public Graphics getGraphics()
-    {
+    public Graphics getGraphics() {
         return graphics;
     }
 
-	//-----------------------------------------------------------------
-	//------------
+    //-----------------------------------------------------------------
+    //------------
     @Override
-    public Audio getAudio() 
-    {
+    public Audio getAudio() {
         return audio;
     }
 
-	//-----------------------------------------------------------------
-	//------------
+    //-----------------------------------------------------------------
+    //------------
     @Override
-    public void setScreen(Screen screen) 
-    {
-        if (screen == null)
+    public void setScreen(Screen screen) {
+        if (screen == null) {
             throw new IllegalArgumentException("Screen must not be null");
+        }
 
         this.screen.pause();
         this.screen.dispose();
@@ -134,11 +126,10 @@ public abstract class AndroidGame extends Activity implements Game
         screen.update(0);
         this.screen = screen;
     }
-    
-	//-----------------------------------------------------------------
-	//------------
-    public Screen getCurrentScreen() 
-    {
-    	return screen;
+
+    //-----------------------------------------------------------------
+    //------------
+    public Screen getCurrentScreen() {
+        return screen;
     }
 }

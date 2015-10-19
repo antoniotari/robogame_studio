@@ -2,64 +2,59 @@ package com.antoniotari.robotgame;
 
 import android.graphics.Rect;
 
-
 public class Projectile {
 
     private int x, y, speedX;
     private boolean visible;
-    
-    private Rect r;
-    
-    public Projectile(int startX, int startY){
+
+    private Rect rect;
+
+    public Projectile(int startX, int startY) {
         x = startX;
         y = startY;
         speedX = 7;
         visible = true;
-        
-        r = new Rect(0, 0, 0, 0);
+
+        rect = new Rect(0, 0, 0, 0);
     }
-    
-    public void update(){
+
+    public void update() {
         x += speedX;
-        r.set(x, y, x+10, y+5);
-        if (x > 800){
+        rect.set(x, y, x + 10, y + 5);
+        if (x > 800) {
             visible = false;
-            r = null;
+            rect = null;
         }
-        if (x < 800){
+        if (x < 800) {
             checkCollision();
         }
     }
 
     private void checkCollision() {
-        if(Rect.intersects(r, GameScreen.hb.r)){
+        if (Rect.intersects(rect, GameScreen.hb.rect)) {
             visible = false;
-        
+
             if (GameScreen.hb.health > 0) {
                 GameScreen.hb.health -= 1;
             }
             if (GameScreen.hb.health == 0) {
-                GameScreen.hb.setCenterX(-100);
-
+                //GameScreen.hb.setCenterX(-100);
+                GameScreen.hb.die();
             }
-
         }
-        
-        if (Rect.intersects(r, GameScreen.hb2.r)){
+
+        if (Rect.intersects(rect, GameScreen.hb2.rect)) {
             visible = false;
 
             if (GameScreen.hb2.health > 0) {
                 GameScreen.hb2.health -= 1;
             }
             if (GameScreen.hb2.health == 0) {
-                GameScreen.hb2.setCenterX(-100);
-                
-
+                //GameScreen.hb2.setCenterX(-100);
+                GameScreen.hb2.die();
             }
-
         }
     }
-
 
     public int getX() {
         return x;
@@ -92,6 +87,4 @@ public class Projectile {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
-    
-    
 }
