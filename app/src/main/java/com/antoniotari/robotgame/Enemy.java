@@ -4,13 +4,19 @@ import com.kilobolt.framework.Graphics;
 
 import android.graphics.Rect;
 
+import javax.inject.Inject;
+
 public class Enemy {
     private int power, centerX, speedX, centerY;
     private Background bg;// = GameScreen.getBg1();
-    private Robot robot = Robot.getInstance();// GameScreen.getRobot();
+    //private Robot robot = Robot.getInstance();// GameScreen.getRobot();
+
+    @Inject
+    Robot robot;
 
     public Rect rect = new Rect(0, 0, 0, 0);
-    public int health = 5;
+    public int health = MAX_HEALTH;
+    public static final int MAX_HEALTH = 5;
 
     private int movementSpeed;
 
@@ -30,11 +36,19 @@ public class Enemy {
         }
     }
 
+    public void reset(){
+        health=MAX_HEALTH;
+        setCenterY(robot.getCenterY());
+        mExplosionAnimation.frameCounter=0;
+    }
+
     //-----------------------------------------------------------------
     //------------
     private void checkCollision() {
         if (Rect.intersects(rect, Robot.rect) || Rect.intersects(rect, Robot.rect2)
                 || Rect.intersects(rect, Robot.rect3) || Rect.intersects(rect, Robot.rect4)) {
+
+            die();
         }
     }
 

@@ -11,7 +11,7 @@ public class ExplosionAnimation extends Animation {
 
     private int x;
     private int y;
-    private int frameCounter=0;
+    int frameCounter=0;
 
     public ExplosionAnimation(Graphics graphics){
         super();

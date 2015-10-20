@@ -7,9 +7,10 @@
 
     <application
        android:icon="@drawable/icon"
-       android:label="RobotGame" >
+        android:name="com.antoniotari.robotgame.application.RoboApplication"
+        android:label="RobotGame" >
         <activity
-           android:name=".SampleGame"
+           android:name=".activities.SampleGame"
            android:configChanges="keyboard|keyboardHidden|orientation"
            android:label="RobotGame"
            android:screenOrientation="landscape" >

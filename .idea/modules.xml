@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/DigiJedi/library/DigiJedi.iml" filepath="$PROJECT_DIR$/DigiJedi/library/DigiJedi.iml" />
       <module fileurl="file://$PROJECT_DIR$/RobotGame.iml" filepath="$PROJECT_DIR$/RobotGame.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

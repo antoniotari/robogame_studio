@@ -1,6 +1,7 @@
 package com.kilobolt.framework.implementation;
 
-import com.antoniotari.global.ScreenDimension;
+import com.antoniotari.android.injection.ApplicationGraph;
+import com.antoniotari.android.jedi.ScreenDimension;
 import com.kilobolt.framework.Audio;
 import com.kilobolt.framework.FileIO;
 import com.kilobolt.framework.Game;
@@ -19,6 +20,8 @@ import android.os.PowerManager.WakeLock;
 import android.view.Window;
 import android.view.WindowManager;
 
+import javax.inject.Inject;
+
 public abstract class AndroidGame extends Activity implements Game {
     private AndroidFastRenderView renderView;
     private Graphics graphics;
@@ -28,25 +31,29 @@ public abstract class AndroidGame extends Activity implements Game {
     private Screen screen;
     private WakeLock wakeLock;
 
+    @Inject ScreenDimension mScreenDimension;
+
     //-----------------------------------------------------------------
     //------------
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ApplicationGraph.getObjectGraph().inject(this);
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         boolean isPortrait = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
-        ScreenDimension.setMetrics(this);
+        //ScreenDimension.setMetrics(this);
         int frameBufferWidth = isPortrait ? 480 : 800;
         int frameBufferHeight = isPortrait ? 800 : 480;
         Bitmap frameBuffer = Bitmap.createBitmap(frameBufferWidth, frameBufferHeight, Config.RGB_565);
         //Float dpiFact=Float.valueOf((float)ScreenDimension.getDensityDpi()/160.0f);
 
-        float scaleX = (float) frameBufferWidth / ScreenDimension.getScreenWidthPX();
-        //        / getWindowManager().getDefaultDisplay().getWidth();
-        float scaleY = (float) frameBufferHeight / ScreenDimension.getScreenHeightPX();
-        //        / getWindowManager().getDefaultDisplay().getHeight();
+        float scaleX = (float) frameBufferWidth / (isPortrait ? mScreenDimension.getScreenWidthPX() : mScreenDimension.getScreenHeightPX());
+        // getWindowManager().getDefaultDisplay().getWidth();// ScreenDimension.getScreenWidthPX();
+        float scaleY = (float) frameBufferHeight / (!isPortrait ? mScreenDimension.getScreenWidthPX() : mScreenDimension.getScreenHeightPX());
+        // getWindowManager().getDefaultDisplay().getHeight();// ScreenDimension.getScreenHeightPX();
 
         renderView = new AndroidFastRenderView(this, frameBuffer);
         graphics = new AndroidGraphics(getAssets(), frameBuffer);

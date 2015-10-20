@@ -1,5 +1,7 @@
 package com.antoniotari.robotgame;
 
+import com.antoniotari.android.injection.ApplicationGraph;
+
 import android.graphics.Rect;
 
 import java.util.ArrayList;
@@ -45,6 +47,10 @@ public enum Robot {
     public void init(Background bg1,Background bg2){
         this.bg1=bg1;
         this.bg2=bg2;
+    }
+
+    Robot(){
+        ApplicationGraph.getObjectGraph().inject(this);
     }
 
     public static Robot getInstance(){

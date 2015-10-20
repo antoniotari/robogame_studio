@@ -1,5 +1,6 @@
 package com.antoniotari.robotgame;
 
+import com.antoniotari.robotgame.activities.SampleGame;
 import com.kilobolt.framework.Image;
 import com.kilobolt.framework.Music;
 import com.kilobolt.framework.Sound;

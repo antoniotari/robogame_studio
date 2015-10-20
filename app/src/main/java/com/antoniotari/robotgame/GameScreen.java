@@ -1,5 +1,6 @@
 package com.antoniotari.robotgame;
 
+import com.antoniotari.robotgame.activities.SampleGame;
 import com.kilobolt.framework.Game;
 import com.kilobolt.framework.Graphics;
 import com.kilobolt.framework.Image;
@@ -8,10 +9,14 @@ import com.kilobolt.framework.Screen;
 
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Handler;
+import android.os.Looper;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * We call nullify to remove every variable used before we go to the menu (to avoid duplicates that leak memory).
@@ -32,7 +37,7 @@ public class GameScreen extends Screen {
     // Variable Setup
     private Background bg1;
     private Background bg2;
-    private Robot robot = Robot.INSTANCE;
+    private Robot robot = Robot.getInstance();
     public Heliboy hb;
     public Heliboy hb2;
 
@@ -55,6 +60,9 @@ public class GameScreen extends Screen {
     Paint paint;
     Paint paint2;
 
+    Timer enemyRefreshTimer=new Timer();
+    Handler mHandler=new Handler(Looper.getMainLooper());
+
     //-----------------------------------------------------------------
     //------------
     public GameScreen(Game game) {
@@ -63,16 +71,18 @@ public class GameScreen extends Screen {
         // Initialize game objects here
         bg1 = new Background(0, 0);
         bg2 = new Background(2160, 0);
-        robot.init(bg1,bg2);
+        robot.init(bg1, bg2);
         //robot = new Robot();
-        hb = new Heliboy(340, 360);
-        hb.setBg(bg1);
-        hb2 = new Heliboy(700, 360);
-        hb2.setBg(bg1);
 
-        //setup the animation for the explosion
-        hb.setExplosionAnimation(game.getGraphics());
-        hb2.setExplosionAnimation(game.getGraphics());
+        refreshEnemies();
+        // add new enemies to the screen every x seconds
+        enemyRefreshTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mHandler.post(GameScreen.this::refreshEnemies);
+            }
+        },1000,5000);
+
 
         character = Assets.character;
         character2 = Assets.character2;
@@ -116,6 +126,27 @@ public class GameScreen extends Screen {
         paint2.setTextAlign(Paint.Align.CENTER);
         paint2.setAntiAlias(true);
         paint2.setColor(Color.WHITE);
+    }
+
+    private void refreshEnemies(){
+        if(hb==null) {
+            hb = new Heliboy(340, robot.getCenterY());
+            hb.setBg(bg1);
+            //setup the animation for the explosion
+            hb.setExplosionAnimation(game.getGraphics());
+        } else if (hb.isDead()) {
+            hb.reset();
+            hb.setCenterX(340);
+        }
+
+        if(hb2==null) {
+            hb2 = new Heliboy(700, robot.getCenterY());
+            hb2.setBg(bg1);
+            hb2.setExplosionAnimation(game.getGraphics());
+        }else if (hb2.isDead()) {
+            hb2.setCenterX(700);
+            hb2.reset();
+        }
     }
 
     //-----------------------------------------------------------------

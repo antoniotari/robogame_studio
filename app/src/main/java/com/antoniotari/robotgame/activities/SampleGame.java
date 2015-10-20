@@ -1,5 +1,8 @@
-package com.antoniotari.robotgame;
+package com.antoniotari.robotgame.activities;
 
+import com.antoniotari.robotgame.Assets;
+import com.antoniotari.robotgame.R;
+import com.antoniotari.robotgame.SplashLoadingScreen;
 import com.kilobolt.framework.Screen;
 import com.kilobolt.framework.implementation.AndroidGame;
 
