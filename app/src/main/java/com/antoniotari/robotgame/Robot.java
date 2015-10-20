@@ -4,7 +4,12 @@ import android.graphics.Rect;
 
 import java.util.ArrayList;
 
-public class Robot {
+/**
+ * singleton, the game is single player
+ */
+public enum Robot {
+    INSTANCE;
+
     // Constants are Here
     final int JUMPSPEED = -15;
     final int MOVESPEED = 5;
@@ -32,10 +37,19 @@ public class Robot {
     public static Rect footleft = new Rect(0, 0, 0, 0);
     public static Rect footright = new Rect(0, 0, 0, 0);
 
-    private Background bg1 = GameScreen.getBg1();
-    private Background bg2 = GameScreen.getBg2();
+    private Background bg1;// = GameScreen.getBg1();
+    private Background bg2;// = GameScreen.getBg2();
 
-    private ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
+    private ArrayList<Projectile> projectiles = new ArrayList<>();
+
+    public void init(Background bg1,Background bg2){
+        this.bg1=bg1;
+        this.bg2=bg2;
+    }
+
+    public static Robot getInstance(){
+        return INSTANCE;
+    }
 
     public void update() {
         // Moves Character or Scrolls Background accordingly.
@@ -90,7 +104,7 @@ public class Robot {
     //-----------------------------------------------------------------
     //------------
     public void moveRight() {
-        if (ducked == false) {
+        if (!ducked) {
             speedX = MOVESPEED;
         }
     }
@@ -98,7 +112,7 @@ public class Robot {
     //-----------------------------------------------------------------
     //------------
     public void moveLeft() {
-        if (ducked == false) {
+        if (ducked) {
             speedX = -MOVESPEED;
         }
     }

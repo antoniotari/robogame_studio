@@ -18,7 +18,7 @@ public class Projectile {
         rect = new Rect(0, 0, 0, 0);
     }
 
-    public void update() {
+    public void update(Enemy... enemies) {
         x += speedX;
         rect.set(x, y, x + 10, y + 5);
         if (x > 800) {
@@ -26,24 +26,29 @@ public class Projectile {
             rect = null;
         }
         if (x < 800) {
-            checkCollision();
+            checkCollision(enemies);
         }
     }
 
-    private void checkCollision() {
-        if (Rect.intersects(rect, GameScreen.hb.rect)) {
-            visible = false;
+    private void checkCollision(Enemy... enemies) {
+        if(enemies==null)return;
 
-            if (GameScreen.hb.health > 0) {
-                GameScreen.hb.health -= 1;
-            }
-            if (GameScreen.hb.health == 0) {
-                //GameScreen.hb.setCenterX(-100);
-                GameScreen.hb.die();
+        for(Enemy hb:enemies) {
+
+            if (Rect.intersects(rect, hb.rect)) {
+                visible = false;
+
+                if (hb.health > 0) {
+                    hb.health -= 1;
+                }
+                if (hb.health == 0) {
+                    //GameScreen.hb.setCenterX(-100);
+                    hb.die();
+                }
             }
         }
 
-        if (Rect.intersects(rect, GameScreen.hb2.rect)) {
+        /*if (Rect.intersects(rect, GameScreen.hb2.rect)) {
             visible = false;
 
             if (GameScreen.hb2.health > 0) {
@@ -53,7 +58,7 @@ public class Projectile {
                 //GameScreen.hb2.setCenterX(-100);
                 GameScreen.hb2.die();
             }
-        }
+        }*/
     }
 
     public int getX() {

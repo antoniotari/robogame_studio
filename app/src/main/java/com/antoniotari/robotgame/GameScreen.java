@@ -30,11 +30,11 @@ public class GameScreen extends Screen {
     GameState state = GameState.Ready;
 
     // Variable Setup
-    private static Background bg1;
-    private static Background bg2;
-    private static Robot robot;
-    public static Heliboy hb;
-    public static Heliboy hb2;
+    private Background bg1;
+    private Background bg2;
+    private Robot robot = Robot.INSTANCE;
+    public Heliboy hb;
+    public Heliboy hb2;
 
     private Image currentSprite;
     private Image character;
@@ -63,9 +63,12 @@ public class GameScreen extends Screen {
         // Initialize game objects here
         bg1 = new Background(0, 0);
         bg2 = new Background(2160, 0);
-        robot = new Robot();
+        robot.init(bg1,bg2);
+        //robot = new Robot();
         hb = new Heliboy(340, 360);
+        hb.setBg(bg1);
         hb2 = new Heliboy(700, 360);
+        hb2.setBg(bg1);
 
         //setup the animation for the explosion
         hb.setExplosionAnimation(game.getGraphics());
@@ -143,6 +146,7 @@ public class GameScreen extends Screen {
                 if (i < line.length()) {
                     char ch = line.charAt(i);
                     Tile t = new Tile(i, j, Character.getNumericValue(ch));
+                    t.setBackground(bg1);
                     tilearray.add(t);
                 }
             }
@@ -257,9 +261,10 @@ public class GameScreen extends Screen {
 
         ArrayList<Projectile> projectiles = robot.getProjectiles();
         for (int i = 0; i < projectiles.size(); i++) {
-            Projectile p = (Projectile) projectiles.get(i);
+            Projectile p = projectiles.get(i);
             if (p.isVisible()) {
-                p.update();
+                //update projectiles status, check for collision, etc...
+                p.update(hb,hb2);
             } else {
                 projectiles.remove(i);
             }
@@ -329,7 +334,7 @@ public class GameScreen extends Screen {
     //------------
     private void updateTiles() {
         for (int i = 0; i < tilearray.size(); i++) {
-            Tile t = (Tile) tilearray.get(i);
+            Tile t = tilearray.get(i);
             t.update();
         }
     }
@@ -527,24 +532,20 @@ public class GameScreen extends Screen {
     //-----------------------------------------------------------------
     //------------
     private void goToMenu() {
-        // TODO Auto-generated method stub
         game.setScreen(new MainMenuScreen(game));
     }
 
     //-----------------------------------------------------------------
     //------------
-    public static Background getBg1() {
-        // TODO Auto-generated method stub
+    /*public static Background getBg1() {
         return bg1;
     }
 
     public static Background getBg2() {
-        // TODO Auto-generated method stub
         return bg2;
     }
 
     public static Robot getRobot() {
-        // TODO Auto-generated method stub
         return robot;
-    }
+    }*/
 }
