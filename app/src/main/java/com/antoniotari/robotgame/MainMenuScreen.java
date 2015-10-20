@@ -22,6 +22,7 @@ public class MainMenuScreen extends Screen {
             TouchEvent event = touchEvents.get(i);
             if (event.type == TouchEvent.TOUCH_UP) {
                 if (inBounds(event, 50, 350, 250, 450)) {
+                    Robot.getInstance().setCenterY(150);
                     game.setScreen(new GameScreen(game));
                 }
             }

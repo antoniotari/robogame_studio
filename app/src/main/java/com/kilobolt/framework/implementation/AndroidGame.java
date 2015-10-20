@@ -2,6 +2,7 @@ package com.kilobolt.framework.implementation;
 
 import com.antoniotari.android.injection.ApplicationGraph;
 import com.antoniotari.android.jedi.ScreenDimension;
+import com.antoniotari.robotgame.GameUtil;
 import com.kilobolt.framework.Audio;
 import com.kilobolt.framework.FileIO;
 import com.kilobolt.framework.Game;
@@ -32,7 +33,7 @@ public abstract class AndroidGame extends Activity implements Game {
     private WakeLock wakeLock;
 
     @Inject ScreenDimension mScreenDimension;
-
+    @Inject GameUtil mGameUtil;
     //-----------------------------------------------------------------
     //------------
     @Override
@@ -50,9 +51,12 @@ public abstract class AndroidGame extends Activity implements Game {
         Bitmap frameBuffer = Bitmap.createBitmap(frameBufferWidth, frameBufferHeight, Config.RGB_565);
         //Float dpiFact=Float.valueOf((float)ScreenDimension.getDensityDpi()/160.0f);
 
-        float scaleX = (float) frameBufferWidth / (isPortrait ? mScreenDimension.getScreenWidthPX() : mScreenDimension.getScreenHeightPX());
+        mGameUtil.setScreenWidth((isPortrait ? mScreenDimension.getScreenWidthPX() : mScreenDimension.getScreenHeightPX()));
+        mGameUtil.setScreenHeight((!isPortrait ? mScreenDimension.getScreenWidthPX() : mScreenDimension.getScreenHeightPX()));
+
+        float scaleX = (float) frameBufferWidth / mGameUtil.getScreenWidth();
         // getWindowManager().getDefaultDisplay().getWidth();// ScreenDimension.getScreenWidthPX();
-        float scaleY = (float) frameBufferHeight / (!isPortrait ? mScreenDimension.getScreenWidthPX() : mScreenDimension.getScreenHeightPX());
+        float scaleY = (float) frameBufferHeight / mGameUtil.getScreenHeight();
         // getWindowManager().getDefaultDisplay().getHeight();// ScreenDimension.getScreenHeightPX();
 
         renderView = new AndroidFastRenderView(this, frameBuffer);

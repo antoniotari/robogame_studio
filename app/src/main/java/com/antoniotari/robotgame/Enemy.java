@@ -4,15 +4,10 @@ import com.kilobolt.framework.Graphics;
 
 import android.graphics.Rect;
 
-import javax.inject.Inject;
-
 public class Enemy {
     private int power, centerX, speedX, centerY;
     private Background bg;// = GameScreen.getBg1();
-    //private Robot robot = Robot.getInstance();// GameScreen.getRobot();
-
-    @Inject
-    Robot robot;
+    private Robot robot = Robot.getInstance();// GameScreen.getRobot();
 
     public Rect rect = new Rect(0, 0, 0, 0);
     public int health = MAX_HEALTH;

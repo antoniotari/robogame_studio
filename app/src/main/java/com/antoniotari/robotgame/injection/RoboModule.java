@@ -2,6 +2,7 @@ package com.antoniotari.robotgame.injection;
 
 import com.antoniotari.android.injection.ForApplication;
 import com.antoniotari.robotgame.Enemy;
+import com.antoniotari.robotgame.GameUtil;
 import com.antoniotari.robotgame.Heliboy;
 import com.antoniotari.robotgame.Robot;
 import com.antoniotari.robotgame.activities.SampleGame;
@@ -30,7 +31,8 @@ import dagger.Provides;
                 Robot.class,
                 Enemy.class,
                 Heliboy.class,
-                AndroidGame.class
+                AndroidGame.class,
+                GameUtil.class
         },
         includes = {
         },
@@ -55,5 +57,10 @@ public class RoboModule {
     @Provides @Singleton
     Robot provideRobot(){
         return Robot.getInstance();
+    }
+
+    @Provides @Singleton
+    GameUtil provideGameUtil(){
+        return GameUtil.getInstance();
     }
 }

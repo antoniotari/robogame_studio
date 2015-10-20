@@ -172,7 +172,7 @@ public class GameScreen extends Screen {
         height = lines.size();
 
         for (int j = 0; j < 12; j++) {
-            String line = (String) lines.get(j);
+            String line = lines.get(j);
             for (int i = 0; i < width; i++) {
                 if (i < line.length()) {
                     char ch = line.charAt(i);
@@ -466,12 +466,15 @@ public class GameScreen extends Screen {
     //-----------------------------------------------------------------
     //------------
     private void nullify() {
+        enemyRefreshTimer.cancel();
+        enemyRefreshTimer.purge();
+        enemyRefreshTimer=null;
         // Set all variables to null. You will be recreating them in the
         // constructor.
         paint = null;
         bg1 = null;
         bg2 = null;
-        robot = null;
+        //robot = null;
         hb = null;
         hb2 = null;
         currentSprite = null;
