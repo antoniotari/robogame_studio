@@ -1,7 +1,5 @@
 package com.antoniotari.robotgame;
 
-import com.antoniotari.android.injection.ApplicationGraph;
-
 /**
  * Created by antonio on 20/10/15.
  */
@@ -12,7 +10,6 @@ public enum GameUtil {
     private int screenHeight;
 
     GameUtil(){
-        ApplicationGraph.getObjectGraph().inject(this);
     }
 
     public static GameUtil getInstance(){

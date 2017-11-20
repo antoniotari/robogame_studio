@@ -1,8 +1,7 @@
 package com.kilobolt.framework.implementation;
 
-import com.antoniotari.android.injection.ApplicationGraph;
-import com.antoniotari.android.jedi.ScreenDimension;
 import com.antoniotari.robotgame.GameUtil;
+import com.antoniotari.robotgame.utils.ScreenDimension;
 import com.kilobolt.framework.Audio;
 import com.kilobolt.framework.FileIO;
 import com.kilobolt.framework.Game;
@@ -21,7 +20,6 @@ import android.os.PowerManager.WakeLock;
 import android.view.Window;
 import android.view.WindowManager;
 
-import javax.inject.Inject;
 
 public abstract class AndroidGame extends Activity implements Game {
     private AndroidFastRenderView renderView;
@@ -32,14 +30,16 @@ public abstract class AndroidGame extends Activity implements Game {
     private Screen screen;
     private WakeLock wakeLock;
 
-    @Inject ScreenDimension mScreenDimension;
-    @Inject GameUtil mGameUtil;
+    ScreenDimension mScreenDimension;
+    GameUtil mGameUtil;
     //-----------------------------------------------------------------
     //------------
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ApplicationGraph.getObjectGraph().inject(this);
+        //ApplicationGraph.getObjectGraph().inject(this);
+        mGameUtil = GameUtil.getInstance();
+        mScreenDimension = ScreenDimension.getInstance(this);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
